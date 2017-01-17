@@ -13,7 +13,7 @@ var keys = document.querySelectorAll('span'),
 operators = [].slice.call(document.querySelectorAll('.operators'))
   .map(tagValues),
 maxLength = 18;
-operators.push('nroot');
+operators.push('nroot', '&radic;');
 
 // Helper function for mapping of dom elements values.
 function tagValues (element) {
@@ -45,7 +45,7 @@ function clicker(e) {
 // Key identifiers
 var dictionary = {
 	65: 'AC', 8: '&lt;', 190: '.', 189: '-', 187: '=', 13: '=', 191: '\u00F7',
-	83: '&radic;'
+	78: '&radic;'
 };
 // Key identifiers in combination with SHIFT
 var combos = {53: '%', 56: '\u00D7', 187: '+'};
@@ -58,7 +58,8 @@ document.addEventListener('keydown', function (event) {
   }
 
 	if (event.shiftKey && combos.hasOwnProperty(event.which)) {
-	  calculations(combo[event.which]);
+		console.log(combos[event.which]);
+	  calculations(combos[event.which]);
 	} else {
 		if (dictionary.hasOwnProperty(event.which))
       calculations(dictionary[event.which]);
@@ -75,7 +76,7 @@ function calculations(pressed) {
 	if (!pressed)
 	  return false;
 
-	last = expression.slice(-1);
+	last = expression.match(/&radic;$/) ? '&radic;' : expression.slice(-1);
 
 	// Check if clears are pressed
 	if (pressed == 'AC') {
@@ -85,9 +86,14 @@ function calculations(pressed) {
 	else if (pressed == '&lt;'){
 		//check if deleted symbol is decimal point
 		if(screen.innerHTML.slice(-1) == '.')
-		decimal = false;
-		var forS = screen.innerHTML.length > 1 ? screen.innerHTML.slice(0,-1) : '0';
-		insert(expression.slice(0,-1), forS, decimal);
+		  decimal = false;
+		if (last === '&radic;'){
+			expression = expression.replace(/&radic;$/, '');
+			insert(expression, screen.innerHTML, decimal);
+		} else {
+			var s = screen.innerHTML.length > 1 ? screen.innerHTML.slice(0,-1) : '0';
+			insert(expression.slice(0,-1), s, decimal);
+		}
 	} else if (operators.indexOf(pressed) > -1) {
 		if (pressed.match(/<math><msqrt>/)) {
 			pressed = '&radic;'; //the way to preserve formating
@@ -109,6 +115,7 @@ function calculations(pressed) {
 		  add(pressed, true, decimal);
 		ready = false;
 	}
+	//TODO leading zero, 
 }
 
 // Operators helper function
@@ -143,7 +150,10 @@ function operations(pressed, last) {
 	}
 	//Replace last operator if necessary
 	if(operators.indexOf(last) > -1 || last == '.'){
-		expression = expression.slice(0, -1);
+		if (last === '&radic;')
+		  expression = expression.replace(/&radic;/, '');
+		else
+		  expression = expression.slice(0, -1);
 	}
 	if (screen.innerHTML == '0' && expression == '' && pressed == '-')
 	  insert(pressed, pressed, false);
@@ -176,12 +186,10 @@ function add(key, current, decValue){
 	decimal = decValue;
 }
 
-function insert(forE, forS, decValue){
-	screen.innerHTML = forS.length <= maxLength ? forS : '0';
-	expression = forE;
+function insert(forExpr, forScreen, decValue){
+	screen.innerHTML = forScreen.length <= maxLength ? forScreen : '0';
+	expression = forExpr;
 
 	result.innerHTML = expression;
 	decimal = decValue;
 }
-
-//TODO document square  9*=,
