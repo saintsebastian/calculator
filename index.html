@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Calculator</title>
+  <link rel='stylesheet' href='style.css' />
+  <link href='https://fonts.googleapis.com/css?family=Abril+Fatface|Open+Sans|Rubik+One' rel='stylesheet'>
+  <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js'></script>
+</head>
+<body>
+  <menu>
+    <svg onclick='toggleSlide("howto")' xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink'>
+      <defs>
+        <!-- Gradient -->
+        <linearGradient id='gradient' x1='0%' y1='0%' x2='100%' y2='0'>
+          <stop offset='0%' style='stop-color:#57e7eb;'/>
+          <stop offset='25%' style='stop-color:#D62229;'/>
+          <stop offset='50%' style='stop-color:#E97639;'/>
+          <stop offset='75%' style='stop-color:#1adb7f;'/>
+          <stop offset='100%' style='stop-color:#57e7eb;'/>
+        </linearGradient>
+
+        <!-- Pattern consisting of two seamless animations  -->
+        <pattern id='pattern' width='300%' height='100%' patternUnits='userSpaceOnUse'>
+          <rect id='first' x='0' y='0' width='150%' height='100%' fill='url(#gradient)'>
+            <animate attributeType='XML'
+            attributeName='x'
+            from='0' to='150%'
+            dur='7s'
+            repeatCount='indefinite'/>
+          </rect>
+          <rect id='two' x='-150%' y='0' width='150%' height='100%' fill='url(#gradient)'>
+            <animate attributeType='XML'
+            attributeName='x'
+            from='-150%' to='0'
+            dur='7s'
+            repeatCount='indefinite'/>
+          </rect>
+        </pattern>
+
+      </defs>
+
+      <text x='50%' y='40' fill='url(#pattern)'>HOWTO</text>
+    </svg>
+    <ul class='sliding hide' id='howto'>
+      <li>
+        use keyboard or mouse for numbers and operators
+      </li>
+      <li>
+        specify the degree when calculating a root
+      </li>
+      <li>
+        percent following an expression will calculate absolute <b>9%=0.09</b>
+      </li>
+      <li>
+        percent following an expression will calculate relative <b>100+9%=109</b>
+      </li>
+      <li>
+        to calculate a power follow number by multiplication and then equate
+        <b>2*=4</b>
+      </li>
+      <li>
+        maximum capability of screen is 16 symbols, 0 will be displayed when result is too long
+      </li>
+    </ul>
+    <svg onclick='toggleSlide("shortcuts")'>
+      <text x='50%' y='40' fill='url(#pattern)'>SHORTCUTS</text>
+      <pattern id='pattern' width='300%' height='100%' patternUnits='userSpaceOnUse'>
+        <use xlink:href='#first'/>
+        <use xlink:href='#two'/>
+      </pattern>
+    </svg>
+    <ul class='sliding hide' id='shortcuts'>
+      <li>
+        <b>A</b> to clear all
+      </li>
+      <li>
+        <b>BACKSPACE</b> to clear last
+      </li>
+      <li>
+        <b>S</b> for square root
+      </li>
+      <li>
+        <b>*</b> for multiplication
+      </li>
+      <li>
+        <b>/</b> for division
+      </li>
+      <li>
+        <b>ENTER</b> or <b>=</b> to see result
+      </li>
+    </ul>
+    <svg onclick='toggleSlide("inspiration")'>
+      <text x='50%' y='40' fill='url(#pattern)'>INSPIRATION</text>
+      <pattern id='pattern' width='300%' height='100%' patternUnits='userSpaceOnUse'>
+        <use xlink:href='#first'/>
+        <use xlink:href='#two'/>
+      </pattern>
+    </svg>
+    <p class='sliding hide' id='inspiration'>
+      inspired by OSX calulator desing and
+      <a href='https://dribbble.com/shots/3031958-Day-004-Calculator'>this prototype</a>
+    </p>
+
+  </menu>
+  <div id='calculator'>
+    <div id='total'>
+      <div id='display'>
+        <div id='screen'></div>
+        <div id='result'></div>
+      </div>
+      <span class='clears' id='clear'>&lt;</span>
+    </div>
+    <div id='keyboard'>
+      <span class='clears' id='clearall'>AC</span>
+      <span class='operators' id='percent'>%</span>
+      <span class='operators' id='nroot'>
+        <math><msqrt><mi>x</mi></msqrt></math>
+      </span>
+      <span class='operators'>+</span>
+      <span>7</span>
+      <span>8</span>
+      <span>9</span>
+      <span class='operators'>-</span>
+      <span>4</span>
+      <span>5</span>
+      <span>6</span>
+      <span class='operators'>&divide;</span>
+      <span>1</span>
+      <span>2</span>
+      <span>3</span>
+      <span class='operators'>&times;</span>
+      <span>0</span>
+      <span id='decimal'>.</span>
+      <span class='operators' id='equals'>=</span>
+    </div>
+  </div>
+
+  <!-- Script should run after all html elements are present -->
+  <script src='script.js'></script>
+</body>
+</html>
