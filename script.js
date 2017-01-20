@@ -3,7 +3,6 @@ function toggleSlide(x){
     var el = document.getElementById(x);
     el.classList.toggle('hide');
 }
-//TODO correct menu
 
 // Calculator
 
@@ -103,19 +102,20 @@ function calculations(pressed) {
 		// Decimal point
 		if (!decimal) {
 			if(expression == '' || expression == '0')
-			insert('0.', '0.', true);
+			  insert('0.', '0.', true);
 			else
-			add(pressed, true, true);
+			  add(pressed, true, true);
 		}
 	} else if (!(pressed =='0' && expression =='0')) {
 		if (equated) {
 			insert(pressed, pressed, decimal);
 			equated = false;
+		} else if (screen.innerHTML == '0' && expression =='0') {
+			insert(pressed, pressed, decimal);
 		} else if (screen.innerHTML.length < maxLength) //Maximum length
 		  add(pressed, true, decimal);
 		ready = false;
 	}
-	//TODO leading zero, 
 }
 
 // Operators helper function
@@ -137,7 +137,8 @@ function operations(pressed, last) {
 		}
 		if (pressed === '%') {
 			var calculated = percentage(num2, num1);
-			equation = num1 + groups[2] + calculated;
+			equation.replace(new RegExp(num2 + '$'), calculated);
+			console.log(expression, equation);
 			pressed = '';
 		}
 		var finalResult = eval(equation).toString();
@@ -193,3 +194,5 @@ function insert(forExpr, forScreen, decValue){
 	result.innerHTML = expression;
 	decimal = decValue;
 }
+
+//TODO 5/6% why?
