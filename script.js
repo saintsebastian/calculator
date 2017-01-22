@@ -1,17 +1,28 @@
 //Menu script
-function toggleSlide(x){
+function toggleSlide(target, x){
     var el = document.getElementById(x);
     el.classList.toggle('hide');
+		console.log(target.getAttribute('aria-expanded'));
+		if (target.getAttribute('aria-expanded') === true){
+			target.setAttribute('aria-expanded', false);
+		} else
+		  target.setAttribute('aria-expanded', true);
 }
+
+var texts = document.querySelectorAll('text');
+// // Assigning onlick for each text
+// for (var i = 0; i < texts.length; i++) {
+// 	texts[i].onclick = function(e) { e.stopPropagation();};
+// }
 
 // Calculator
 
 // Keys and Operators
-var keys = document.querySelectorAll('span'),
+var keys = document.querySelectorAll('.key'),
 // Following code is not the most elegant, but allows future expansion of keys
 operators = [].slice.call(document.querySelectorAll('.operators'))
   .map(tagValues),
-maxLength = 18;
+maxLength = 17;
 operators.push('nroot', '&radic;');
 
 // Helper function for mapping of dom elements values.
@@ -43,7 +54,7 @@ function clicker(e) {
 
 // Key identifiers
 var dictionary = {
-	65: 'AC', 8: '&lt;', 190: '.', 189: '-', 187: '=', 13: '=', 191: '\u00F7',
+	65: 'AC', 8: '&lt;', 190: '.', 189: '-', 187: '=', 13: '=', 32: '=', 191: '\u00F7',
 	78: '&radic;'
 };
 // Key identifiers in combination with SHIFT
@@ -63,7 +74,7 @@ document.addEventListener('keydown', function (event) {
 		if (dictionary.hasOwnProperty(event.which))
       calculations(dictionary[event.which]);
 
-		if (!event.shiftKey && 47 < event.which && event.which < 58)
+		else if (!event.shiftKey && 47 < event.which && event.which < 58)
 			calculations(String(parseInt(event.which) - 48));
 	}
 
@@ -195,4 +206,7 @@ function insert(forExpr, forScreen, decValue){
 	decimal = decValue;
 }
 
-//TODO 5/6% why?
+//TODO more operations testing
+//TODO chrome root
+//TODO input?
+//TODO tota11y test

@@ -1,38 +1,53 @@
-body, div, span{
+body, div {
 	padding:0;
 	margin:0;
-	font-family: 'Abril Fatface', cursive;
+}
+
+body, div {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-around;
+	align-content: stretch;
 }
 
 /* Menu */
 
 menu {
-	display: block;
-	float: left;
-	width: 400px;
+	display: flex;
+	flex-flow: column wrap;
+	width: 300px;
+	align-self: flex-start;
+	flex: 0 1 auto;
 	text-align: center;
 }
 
 menu p,
 menu ul {
 	font-family: 'Open Sans', sans-serif;
-	font-size: 12px;
+	font-size: 16px;
 	list-style-type: none;
 	display: block;
 	letter-spacing: 1px;
 }
 
+.holder {
+	border: none;
+	background-color: transparent;
+	text-align: center;
+	width: 100%;
+	align-self: flex-start;
+}
+
 text {
 	font-family: 'Rubik One', sans-serif;
-	font-size: 45px;
+	font-size: 2.5vw;
 	text-anchor: middle;
-	dy: 40;
-	/*x: 50%;*/
+	dominant-baseline: central;
 }
 
 svg {
-	width: 100%;
-	height: 50px;
+	width: auto;
+	height: 70px;
 	letter-spacing: 3px;
 	cursor: pointer;
 }
@@ -46,11 +61,12 @@ pattern {
 
 .sliding {
   transition: all 2s ease-in-out;
-	margin-left: -30px;
+	align-self: center;
 }
 
 .hide {
   height: 0;
+	hidden: true;
 	display: none;
 }
 
@@ -59,8 +75,13 @@ pattern {
 #calculator {
 	top: 20px;
 	width: 300px;
-	height: 480px;
-	margin: 40px auto auto;
+	height: 442px;
+	margin-top: 40px;
+	flex: 0 1 auto;
+	align-self: center;
+	justify-content: space-around;
+	display: flex;
+	flex-flow: row wrap;
 	box-shadow: 0px 0px 30px 5px rgba(0,0,0,0.75);
 	-webkit-box-shadow: 0px 0px 30px 5px rgba(0,0,0,0.75);
 	-moz-box-shadow: 0px 0px 30px 5px rgba(0,0,0,0.75);
@@ -75,32 +96,33 @@ pattern {
 }
 
 #total {
-	height: 80px;
+	height: 77px;
 	width: 100%;
-	margin:auto;
+	margin: auto;
 	background-color: #fffafa;
-	font-size: 18px;
+	display: flex;
+	flex-flow: row wrap;
 }
 
 #display {
 	float: left;
-	width: 70%;
-	height: 80px;
+	width: 225px;
+	height: 77px;
 	text-align: right;
-	line-height: 80px;
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: center;
+	align-items: flex-end;
 }
 
 #screen {
-	float: top;
-	height: 50px;
-	width: 100%;
+	flex-basis: 45px;
+	font-size: 26px;
+	margin-top: 20px;
 }
 
 #result {
-	float: bottom;
-	height: 25px;
-	width: 100%;
-	line-height: 25px;
+	flex-basis: 20px;
 }
 
 #clear {
@@ -109,22 +131,23 @@ pattern {
 }
 
 #keyboard {
-	height: 400px;
+	height: 375px;
 	width: 300px;
 	background-color: #D6D7D7;
 	text-align: right;
-	font-size: 40px;
 }
 
-span {
+.key {
 	display: inline;
-	line-height: 78px;
-	width: 73px;
+	height: 75px;
+	width: 75px;
 	border: 1px solid #D6D7D7;
 	background-color: #fffafa;
 	float: left;
 	text-align: center;
 	cursor: pointer;
+	font-family: 'Abril Fatface', cursive;
+	font-size: 40px;
 }
 
 #equals {
@@ -149,7 +172,7 @@ span {
 
 /* Calculator On Hover Effects */
 
-span:hover{
+button:hover{
 	background-color: #dffbfb;
 }
 
