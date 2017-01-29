@@ -1,212 +1,241 @@
-//Menu script
-function toggleSlide(target, x){
-    var el = document.getElementById(x);
-    el.classList.toggle('hide');
-		console.log(target.getAttribute('aria-expanded'));
-		if (target.getAttribute('aria-expanded') === true){
-			target.setAttribute('aria-expanded', false);
-		} else
-		  target.setAttribute('aria-expanded', true);
+// Menu
+function toggleSlide(target, x) { // eslint-disable-line no-unused-vars
+  var el = document.getElementById(x);
+  el.classList.toggle('hide');
+  if (target.getAttribute('aria-expanded') === true)
+    target.setAttribute('aria-expanded', false);
+  else
+    target.setAttribute('aria-expanded', true);
 }
-
-var texts = document.querySelectorAll('text');
-// // Assigning onlick for each text
-// for (var i = 0; i < texts.length; i++) {
-// 	texts[i].onclick = function(e) { e.stopPropagation();};
-// }
 
 // Calculator
 
 // Keys and Operators
-var keys = document.querySelectorAll('.key'),
+var keys = document.querySelectorAll('.key');
 // Following code is not the most elegant, but allows future expansion of keys
-operators = [].slice.call(document.querySelectorAll('.operators'))
-  .map(tagValues),
-maxLength = 17;
-operators.push('nroot', '&radic;');
+var operators = [].slice.call(document.querySelectorAll('.operators'))
+  .map(tagValues);
+var maxLength = 17;
 
-// Helper function for mapping of dom elements values.
-function tagValues (element) {
-	return element.innerHTML;
+// Helper function for mapping of dom elements values
+function tagValues(element) {
+  return element.innerHTML;
 }
 
 // Variables used for calculation
-var screen = document.querySelector('#screen'),
-result = document.querySelector('#result'),
-decimal = false, //only on point per number allowed
-expression = '', // evaluated on 'operators' or 'equals'
-ready = true, //identify when calculator is ready for the next expression
-equated = false; // detect that equals is pressed
+var screen = document.querySelector('#screen');
+var result = document.querySelector('#result');
+var decimal = false; // Only on point per number allowed
+var expression = ''; // Evaluated on 'operators' or 'equals'
+var ready = true; // Identify when calculator is ready for the next expression
+var equated = false; // Detect that equals is pressed
 screen.innerHTML = '0';
-
 
 // Mouse events
 
 // Assigning onlick for each keys
-for (var i = 0; i < keys.length; i++) {
-	keys[i].onclick = clicker;
-}
+for (var i = 0; i < keys.length; i++)
+  keys[i].onclick = clicker;
 
 // Handling any mouse click
 function clicker(e) {
-	calculations(this.innerHTML);
+  calculations(this.innerHTML);
 }
 
 // Key identifiers
-var dictionary = {
-	65: 'AC', 8: '&lt;', 190: '.', 189: '-', 187: '=', 13: '=', 32: '=', 191: '\u00F7',
-	78: '&radic;'
+var wkDic = {
+  65: 'AC',
+  8: '&lt;',
+  190: '.',
+  189: '-',
+  187: '=',
+  13: '=',
+  32: '=',
+  191: '\u00F7',
+  78: '√'
+};
+
+var mozDic = {
+  65: 'AC',
+  8: '&lt;',
+  190: '.',
+  173: '-',
+  61: '=',
+  13: '=',
+  32: '=',
+  191: '\u00F7',
+  78: '√'
 };
 // Key identifiers in combination with SHIFT
-var combos = {53: '%', 56: '\u00D7', 187: '+'};
+var wkCombos = {53: '%', 56: '\u00D7', 187: '+'};
+var mozCombos = {53: '%', 56: '\u00D7', 61: '+'};
+
+// Detecting browser an assgning correct key codes
+var firefox = typeof InstallTrigger !== 'undefined';
+var dictionary = firefox ? mozDic : wkDic;
+var combos = firefox ? mozCombos : wkCombos;
 
 // Key events
-document.addEventListener('keydown', function (event) {
+document.addEventListener('keydown', function(event) {
   if (event.defaultPrevented) {
-		// Avoid event duplication
+    // Avoid event duplication
     return;
   }
 
-	if (event.shiftKey && combos.hasOwnProperty(event.which)) {
-		console.log(combos[event.which]);
-	  calculations(combos[event.which]);
-	} else {
-		if (dictionary.hasOwnProperty(event.which))
+  if (event.shiftKey && combos.hasOwnProperty(event.which)) {
+    calculations(combos[event.which]);
+    hover(combos[event.which]);
+  } else {
+    if (dictionary.hasOwnProperty(event.which)) {
       calculations(dictionary[event.which]);
-
-		else if (!event.shiftKey && 47 < event.which && event.which < 58)
-			calculations(String(parseInt(event.which) - 48));
-	}
-
+      hover(dictionary[event.which]);
+    } else if (!event.shiftKey && event.which > 47 && event.which < 58) {
+      calculations(String(parseInt(event.which) - 48));
+      hover(String(parseInt(event.which) - 48));
+    }
+  }
 }, true);
 
+function hover(key) {
+  for (var i = 0; i < keys.length; i++) {
+    if (keys[i].innerHTML === key) {
+      keys[i].classList.toggle('hover');
+      unhover(i);
+    }
+  }
+}
+
+function unhover(i) {
+  window.setTimeout(function() {
+    keys[i].classList.toggle('hover');
+  }, 500);
+}
 // Calculations
 
 function calculations(pressed) {
-	if (!pressed)
-	  return false;
+  if (!pressed)
+    return false;
 
-	last = expression.match(/&radic;$/) ? '&radic;' : expression.slice(-1);
+  if (expression === 'Infinity')
+    expression = '';
 
-	// Check if clears are pressed
-	if (pressed == 'AC') {
-		insert('', '0', false);
-		ready = true;
-	}
-	else if (pressed == '&lt;'){
-		//check if deleted symbol is decimal point
-		if(screen.innerHTML.slice(-1) == '.')
-		  decimal = false;
-		if (last === '&radic;'){
-			expression = expression.replace(/&radic;$/, '');
-			insert(expression, screen.innerHTML, decimal);
-		} else {
-			var s = screen.innerHTML.length > 1 ? screen.innerHTML.slice(0,-1) : '0';
-			insert(expression.slice(0,-1), s, decimal);
-		}
-	} else if (operators.indexOf(pressed) > -1) {
-		if (pressed.match(/<math><msqrt>/)) {
-			pressed = '&radic;'; //the way to preserve formating
-		}
-		operations(pressed, last);
-	} else if (pressed == '.') {
-		// Decimal point
-		if (!decimal) {
-			if(expression == '' || expression == '0')
-			  insert('0.', '0.', true);
-			else
-			  add(pressed, true, true);
-		}
-	} else if (!(pressed =='0' && expression =='0')) {
-		if (equated) {
-			insert(pressed, pressed, decimal);
-			equated = false;
-		} else if (screen.innerHTML == '0' && expression =='0') {
-			insert(pressed, pressed, decimal);
-		} else if (screen.innerHTML.length < maxLength) //Maximum length
-		  add(pressed, true, decimal);
-		ready = false;
-	}
+  var last = expression.match(/Infinity$/) ? 'Infinity' : expression.slice(-1);
+
+  // Check if clears are pressed
+  if (pressed === 'AC') {
+    insert('', '0', false);
+    ready = true;
+  } else if (pressed === '&lt;') {
+    // Check if deleted symbol is decimal point
+    if (screen.innerHTML.slice(-1) === '.')
+      decimal = false;
+    var s = screen.innerHTML.length > 1 ? screen.innerHTML.slice(0, -1) : '0';
+    insert(expression.slice(0, -1), s, decimal);
+  } else if (operators.indexOf(pressed) > -1) {
+    operations(pressed, last);
+  } else if (pressed === '.') {
+    // Decimal point
+    if (!decimal && !equated) {
+      if (expression === '' || expression === '0') {
+        insert('0.', '0.', true);
+      } else if (operators.indexOf(last) > -1 && expression.indexOf('.') < 0) {
+        var shortened = expression.replace(last, '.');
+        insert(shortened, shortened, true);
+      } else if (ready) {
+        add('0.', true, true);
+      } else {
+        add(pressed, true, true);
+      }
+      ready = false;
+    }
+  } else if (!(pressed === '0' && expression === '0')) {
+    if (equated) {
+      insert(pressed, pressed, decimal);
+      equated = false;
+    } else if ((screen.innerHTML === '0' && expression === '0') ||
+               (screen.innerHTML === '0' && expression === '')) {
+      insert(pressed, pressed, decimal);
+    } else if (screen.innerHTML.length < maxLength) { // Maximum length
+      add(pressed, true, decimal);
+    }
+    ready = false;
+  }
 }
 
 // Operators helper function
 function operations(pressed, last) {
-	// Directly return result of the last expression
-	var reg = /^(-?\d+(?:\.\d+)?)(\D+)(\d+(?:\.\d+)?)$/,
-	equation;
-	if (expression.match(reg)) {
-		var groups = reg.exec(expression),
-		num1 = parseFloat(groups[1]),
-		num2 = parseFloat(groups[3]);
+  // Directly return result of the last expression
+  var reg = /^(-?\d+(?:\.\d+)?)([^.0-9])(\d+(?:\.\d+)?)$/;
+  var equation;
+  if (expression.match(reg)) {
+    var groups = reg.exec(expression);
+    var num1 = parseFloat(groups[1]);
+    var num2 = parseFloat(groups[3]);
+    var res;
 
-		if (groups[2] !== '&radic;') {
-			equation = expression.replace('÷', '/')
-			.replace('\u00F7', '/').replace('\u00D7', '*');
-		} else {
-			 equation = Math.pow(num1, 1/num2);
-			 console.log(num1, 1/num2); //TODO fraction root
-		}
-		if (pressed === '%') {
-			var calculated = percentage(num2, num1);
-			equation.replace(new RegExp(num2 + '$'), calculated);
-			console.log(expression, equation);
-			pressed = '';
-		}
-		var finalResult = eval(equation).toString();
-		insert(finalResult, finalResult, false);
-	} else if (pressed === '%'){
-		//absolute percentage
-		var res = percentage(parseFloat(expression, 2), false).toString();
-		insert(res, res, false);
-		pressed = '';
-	}
-	//Replace last operator if necessary
-	if(operators.indexOf(last) > -1 || last == '.'){
-		if (last === '&radic;')
-		  expression = expression.replace(/&radic;/, '');
-		else
-		  expression = expression.slice(0, -1);
-	}
-	if (screen.innerHTML == '0' && expression == '' && pressed == '-')
-	  insert(pressed, pressed, false);
-	else if (pressed != '=')
-	  insert(expression+pressed, '0', false);
-	else if (pressed == '='){
-		if (last === '×' || last === '\u00D7'){
-			var num = parseFloat(expression, 5);
-			var res = (num * num).toString();
-			insert(res, res, false);
-		}
-		equated = true;
-	}
-	ready = true;
+    if (groups[2] === '√') {
+      equation = Math.pow(num1, 1 / num2);
+    } else {
+      equation = expression.replace('÷', '/')
+       .replace('\u00F7', '/').replace('\u00D7', '*');
+    }
+    if (pressed === '%') {
+      var calculated = percentage(num2, num1);
+      equation.replace(new RegExp(num2 + '$'), calculated);
+      pressed = '';
+    }
+    var finalResult = eval(equation).toString(); // eslint-disable-line no-eval
+    if (!isNaN(finalResult))
+      insert(finalResult, finalResult, false);
+  } else if (pressed === '%') {
+    // absolute percentage
+    res = percentage(parseFloat(expression, 2), false).toString();
+    insert(res, res, false);
+    pressed = '';
+  }
+  // Replace last operator if necessary
+  if (operators.indexOf(last) > -1 || last === '.')
+    expression = expression.slice(0, -1);
+
+  if (screen.innerHTML === '0' && expression === '' && pressed === '-') {
+    insert(pressed, pressed, false);
+  } else if (pressed !== '=' && !ready) {
+    insert(expression + pressed, '0', false);
+    equated = false;
+  } else if (pressed === '=') {
+    if (last === '×' || last === '\u00D7') {
+      var num = parseFloat(expression, 5);
+      res = (num * num).toString();
+      insert(res, res, false);
+    }
+    equated = true;
+  } else if (ready) {
+    add(pressed, false, decimal);
+    equated = false;
+  }
+  ready = true;
 }
 
 // Helpers
-function percentage (num1, num2) {
-	return num2 ? (num1 * num2 / 100 ): (num1 / 100);
+function percentage(num1, num2) {
+  return num2 ? (num1 * num2 / 100) : (num1 / 100);
 }
 
 // Insert or add to screen
-function add(key, current, decValue){
-	// allow calculations with result of previous calculations
-	if (current)
-	  screen.innerHTML = ready? key: (screen.innerHTML+key);
+function add(key, current, decValue) {
+  // Allow calculations with result of previous calculations
+  if (current)
+    screen.innerHTML = ready ? key : (screen.innerHTML + key);
 
-	expression += key;
-	result.innerHTML = expression;
-	decimal = decValue;
+  expression += key;
+  result.innerHTML = expression;
+  decimal = decValue;
 }
 
-function insert(forExpr, forScreen, decValue){
-	screen.innerHTML = forScreen.length <= maxLength ? forScreen : '0';
-	expression = forExpr;
+function insert(forExpr, forScreen, decValue) {
+  screen.innerHTML = forScreen.length <= maxLength ? forScreen : '0';
+  expression = forExpr;
 
-	result.innerHTML = expression;
-	decimal = decValue;
+  result.innerHTML = expression;
+  decimal = decValue;
 }
-
-//TODO more operations testing
-//TODO chrome root
-//TODO input?
-//TODO tota11y test

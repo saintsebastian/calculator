@@ -1,9 +1,11 @@
-body, div {
+body,
+div {
 	padding:0;
 	margin:0;
 }
 
-body, div {
+body,
+div {
 	display: flex;
 	flex-flow: row wrap;
 	justify-content: space-around;
@@ -28,6 +30,10 @@ menu ul {
 	list-style-type: none;
 	display: block;
 	letter-spacing: 1px;
+}
+
+#proto {
+  color: #22313F;
 }
 
 .holder {
@@ -172,18 +178,22 @@ pattern {
 
 /* Calculator On Hover Effects */
 
-button:hover{
+button:hover,
+button.hover{
 	background-color: #dffbfb;
 }
 
-#equals:hover {
+#equals:hover,
+#equals.hover{
 	background-color: #1adb7f;
 }
 
-.operators:hover {
+.operators:hover,
+.operators.hover{
 	background-color: #57e7eb;
 }
 
-.clears:hover {
+.clears:hover,
+.clears.hover{
 	background-color: #84efef;
 }
