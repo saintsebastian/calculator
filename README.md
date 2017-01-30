@@ -8,5 +8,5 @@ browser calculator written with pure HTML+CSS and vanilla JS
 - [x] accessibility/semantic html
 - [x] contrast check
 - [x] accessibility check ([tota11y](https://github.com/Khan/tota11y))
-- [x] checked using [HTML_CodeSniffer](http://squizlabs.github.io/HTML_CodeSniffer/)
+- [x] code checked ([HTML_CodeSniffer](http://squizlabs.github.io/HTML_CodeSniffer/))
 - [ ] testing

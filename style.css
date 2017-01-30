@@ -32,6 +32,11 @@ menu ul {
 	letter-spacing: 1px;
 }
 
+li {
+	line-height: 17px;
+	margin-top: 10px;
+}
+
 #proto {
   color: #22313F;
 }

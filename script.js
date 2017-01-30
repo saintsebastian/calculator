@@ -117,9 +117,9 @@ function calculations(pressed) {
     return false;
 
   if (expression === 'Infinity')
-    expression = '';
+    insert('', 0, false);
 
-  var last = expression.match(/Infinity$/) ? 'Infinity' : expression.slice(-1);
+  var last = expression.slice(-1);
 
   // Check if clears are pressed
   if (pressed === 'AC') {
@@ -199,7 +199,10 @@ function operations(pressed, last) {
 
   if (screen.innerHTML === '0' && expression === '' && pressed === '-') {
     insert(pressed, pressed, false);
+  } else if (screen.innerHTML === 'Infinity') {
+    insert('', '0', false);
   } else if (pressed !== '=' && !ready) {
+    console.log('mehere');
     insert(expression + pressed, '0', false);
     equated = false;
   } else if (pressed === '=') {
@@ -209,7 +212,8 @@ function operations(pressed, last) {
       insert(res, res, false);
     }
     equated = true;
-  } else if (ready) {
+  } else if (ready && expression !== '') {
+    console.log('me');
     add(pressed, false, decimal);
     equated = false;
   }
